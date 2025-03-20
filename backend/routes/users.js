@@ -30,4 +30,8 @@ router.post('/login', [
         validate
     ], login);
 
+router.get('/hello',(req, res) => { // 통신 확인용 더미 엔드포인트
+    res.send('hello');
+})
+
 module.exports = router;

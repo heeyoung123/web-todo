@@ -1,30 +1,44 @@
 const conn = require('../mariadb');
 const { StatusCodes } = require('http-status-codes');
 const dotenv = require('dotenv').config();
+const jwt = require('jsonwebtoken');
+
+const getTodo = (req, res) => {
+    const userId = req.userId; // req.userId 사용
+    console.log("GET /todos route hit"); // 이 로그가 찍히는지 확인
+    conn.query('SELECT * FROM todos WHERE user_id = ?', [userId], (err, results) => { // user_id 기반 조회
+        if (err) {
+            console.error("Error fetching todos:", err); // 데이터베이스 오류 로그
+            return res.status(500).json({ error: 'Internal Server Error' }); // 오류 응답
+        }
+        console.log("Todos fetched successfully:", results); // 데이터베이스 결과 로그
+        res.json(results); // 결과 응답
+    });
+};
+
 
 // To-Do 항목 생성
 const createTodo = (req, res) => {
-    const { team_name } = req.body;
+    const { name, team_id } = req.body; // req.body에서 name과 team_id 추출
     // 토큰에서 user_id 가져오기
     const token = req.cookies.token;
     if (!token) {
         return res.status(StatusCodes.UNAUTHORIZED).json({ message: '로그인이 필요합니다.' });
     }
-    const decoded = jwt.verify(token, process.env.PRIVATE_KEY);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user_id = decoded.user_id;
+
+    if (!user_id) {
+        return res.status(StatusCodes.UNAUTHORIZED).json({ message: '로그인이 필요합니다.' });
+    }
 
     // user_id와 team_id 중 하나만 존재하는지 확인
     if ((user_id && team_id) || (!user_id && !team_id)) {
         return res.status(StatusCodes.BAD_REQUEST).json({ message: 'user_id 또는 team_id 중 하나만 제공해야 합니다.' });
     }
 
-    // user_id 또는 team_id가 존재하는지 확인
-    if (!user_id && !team_id) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ message: 'user_id 또는 team_id 중 하나는 반드시 제공해야 합니다.' });
-    }
-
     const sql = `INSERT INTO todos (name, user_id, team_id, created_at) VALUES (?, ?, ?, NOW())`;
-    const values = [todo_name, user_id, team_id];
+    const values = [name, user_id, team_id];
 
     conn.query(sql, values, (err, results) => {
         if (err) {
@@ -108,6 +122,7 @@ const deleteTodo = (req, res) => {
 };
 
 module.exports = {
+    getTodo,
     createTodo,
     modifyTodo,
     deleteTodo

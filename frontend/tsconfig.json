@@ -1,0 +1,29 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "compilerOptions": {
+    "types": [
+      "vite-plugin-svgr/client"
+    ],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "jsx": "react-jsx",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "src",
+    "icon.d.ts"
+  ]
+}
+
+
+

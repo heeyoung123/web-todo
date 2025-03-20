@@ -142,7 +142,6 @@ const Home = () => {
           handleDeleteDone={handleDeleteDone}
           handleUndo={handleUndo}
         />{" "}
-        \
       </S.TodoWrapper>
     </HomeContainer>
   );

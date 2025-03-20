@@ -9,4 +9,7 @@ export default defineConfig({
 		react(),
 		svgr(),
 	],
+	server: {
+		port: 3000
+	}
 });

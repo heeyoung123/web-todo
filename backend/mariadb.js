@@ -5,7 +5,6 @@ const connection = mariadb.createConnection({
     user: 'root',
     password: 'root',
     database: 'ToDo',
-    port: 3306,
     dateStrings: true,
 })
 
